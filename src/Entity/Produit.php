@@ -45,6 +45,9 @@ class Produit
     #[ORM\ManyToMany(targetEntity: Specificite::class, inversedBy: 'produits')]
     private $specificite;
 
+    #[ORM\Column(type: 'boolean')]
+    private $isImprime = false;
+
     public function __construct()
     {
         $this->specificite = new ArrayCollection();
@@ -171,6 +174,18 @@ class Produit
     public function removeSpecificite(Specificite $specificite): self
     {
         $this->specificite->removeElement($specificite);
+
+        return $this;
+    }
+
+    public function getIsImprime(): ?bool
+    {
+        return $this->isImprime;
+    }
+
+    public function setIsImprime(bool $isImprime): self
+    {
+        $this->isImprime = $isImprime;
 
         return $this;
     }
