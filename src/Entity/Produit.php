@@ -42,15 +42,29 @@ class Produit
     #[ORM\ManyToOne(targetEntity: Saison::class, inversedBy: 'produits')]
     private $saison;
 
-    #[ORM\ManyToMany(targetEntity: Specificite::class, inversedBy: 'produits')]
-    private $specificite;
-
     #[ORM\Column(type: 'boolean')]
     private $isImprime = false;
+
+    #[ORM\ManyToMany(targetEntity: Couleur::class, inversedBy: 'produits')]
+    private $couleur;
+
+    #[ORM\ManyToOne(targetEntity: Longueur::class, inversedBy: 'produits')]
+    private $longeur;
+
+    #[ORM\ManyToOne(targetEntity: Manche::class, inversedBy: 'produits')]
+    private $manche;
+
+    #[ORM\ManyToMany(targetEntity: Matiere::class, inversedBy: 'produits')]
+    private $matiere;
+
+    #[ORM\ManyToOne(targetEntity: Specificite::class, inversedBy: 'produits')]
+    private $specificite;
 
     public function __construct()
     {
         $this->specificite = new ArrayCollection();
+        $this->couleur = new ArrayCollection();
+        $this->matiere = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -154,30 +168,6 @@ class Produit
         return $this;
     }
 
-    /**
-     * @return Collection<int, Specificite>
-     */
-    public function getSpecificite(): Collection
-    {
-        return $this->specificite;
-    }
-
-    public function addSpecificite(Specificite $specificite): self
-    {
-        if (!$this->specificite->contains($specificite)) {
-            $this->specificite[] = $specificite;
-        }
-
-        return $this;
-    }
-
-    public function removeSpecificite(Specificite $specificite): self
-    {
-        $this->specificite->removeElement($specificite);
-
-        return $this;
-    }
-
     public function getIsImprime(): ?bool
     {
         return $this->isImprime;
@@ -186,6 +176,90 @@ class Produit
     public function setIsImprime(bool $isImprime): self
     {
         $this->isImprime = $isImprime;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Couleur>
+     */
+    public function getCouleur(): Collection
+    {
+        return $this->couleur;
+    }
+
+    public function addCouleur(Couleur $couleur): self
+    {
+        if (!$this->couleur->contains($couleur)) {
+            $this->couleur[] = $couleur;
+        }
+
+        return $this;
+    }
+
+    public function removeCouleur(Couleur $couleur): self
+    {
+        $this->couleur->removeElement($couleur);
+
+        return $this;
+    }
+
+    public function getLongeur(): ?Longueur
+    {
+        return $this->longeur;
+    }
+
+    public function setLongeur(?Longueur $longeur): self
+    {
+        $this->longeur = $longeur;
+
+        return $this;
+    }
+
+    public function getManche(): ?Manche
+    {
+        return $this->manche;
+    }
+
+    public function setManche(?Manche $manche): self
+    {
+        $this->manche = $manche;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Matiere>
+     */
+    public function getMatiere(): Collection
+    {
+        return $this->matiere;
+    }
+
+    public function addMatiere(Matiere $matiere): self
+    {
+        if (!$this->matiere->contains($matiere)) {
+            $this->matiere[] = $matiere;
+        }
+
+        return $this;
+    }
+
+    public function removeMatiere(Matiere $matiere): self
+    {
+        $this->matiere->removeElement($matiere);
+
+        return $this;
+    }
+
+    public function getSpecificite(): ?Specificite
+    {
+        return $this->specificite;
+    }
+
+    public function setSpecificite(?Specificite $specificite): self
+    {
+        $this->specificite = $specificite;
 
         return $this;
     }

@@ -29,8 +29,9 @@ class Specificite
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private $updatedAt;
 
-    #[ORM\ManyToMany(targetEntity: Produit::class, mappedBy: 'specificite')]
+    #[ORM\OneToMany(mappedBy: 'specificite', targetEntity: Produit::class)]
     private $produits;
+
 
     public function __construct()
     {
@@ -102,7 +103,7 @@ class Specificite
     {
         if (!$this->produits->contains($produit)) {
             $this->produits[] = $produit;
-            $produit->addSpecificite($this);
+            $produit->setSpecificite($this);
         }
 
         return $this;
@@ -111,7 +112,10 @@ class Specificite
     public function removeProduit(Produit $produit): self
     {
         if ($this->produits->removeElement($produit)) {
-            $produit->removeSpecificite($this);
+            // set the owning side to null (unless already changed)
+            if ($produit->getSpecificite() === $this) {
+                $produit->setSpecificite(null);
+            }
         }
 
         return $this;
