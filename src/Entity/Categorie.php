@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CategorieRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CategorieRepository::class)]
@@ -29,6 +31,14 @@ class Categorie
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $illustration;
+
+    #[ORM\OneToMany(mappedBy: 'categorie', targetEntity: Type::class)]
+    private $type;
+
+    public function __construct()
+    {
+        $this->type = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -91,6 +101,36 @@ class Categorie
     public function setIllustration(?string $illustration): self
     {
         $this->illustration = $illustration;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Type>
+     */
+    public function getType(): Collection
+    {
+        return $this->type;
+    }
+
+    public function addType(Type $type): self
+    {
+        if (!$this->type->contains($type)) {
+            $this->type[] = $type;
+            $type->setCategorie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeType(Type $type): self
+    {
+        if ($this->type->removeElement($type)) {
+            // set the owning side to null (unless already changed)
+            if ($type->getCategorie() === $this) {
+                $type->setCategorie(null);
+            }
+        }
 
         return $this;
     }

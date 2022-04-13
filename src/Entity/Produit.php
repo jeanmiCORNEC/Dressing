@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ProduitRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
@@ -32,6 +34,21 @@ class Produit
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $emplacement;
+
+    #[ORM\ManyToOne(targetEntity: Type::class, inversedBy: 'produits')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $type;
+
+    #[ORM\ManyToOne(targetEntity: Saison::class, inversedBy: 'produits')]
+    private $saison;
+
+    #[ORM\ManyToMany(targetEntity: Specificite::class, inversedBy: 'produits')]
+    private $specificite;
+
+    public function __construct()
+    {
+        $this->specificite = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -106,6 +123,54 @@ class Produit
     public function setEmplacement(?string $emplacement): self
     {
         $this->emplacement = $emplacement;
+
+        return $this;
+    }
+
+    public function getType(): ?Type
+    {
+        return $this->type;
+    }
+
+    public function setType(?Type $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getSaison(): ?Saison
+    {
+        return $this->saison;
+    }
+
+    public function setSaison(?Saison $saison): self
+    {
+        $this->saison = $saison;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Specificite>
+     */
+    public function getSpecificite(): Collection
+    {
+        return $this->specificite;
+    }
+
+    public function addSpecificite(Specificite $specificite): self
+    {
+        if (!$this->specificite->contains($specificite)) {
+            $this->specificite[] = $specificite;
+        }
+
+        return $this;
+    }
+
+    public function removeSpecificite(Specificite $specificite): self
+    {
+        $this->specificite->removeElement($specificite);
 
         return $this;
     }
