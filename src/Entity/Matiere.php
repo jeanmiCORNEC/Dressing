@@ -23,9 +23,13 @@ class Matiere
     #[ORM\ManyToMany(targetEntity: Produit::class, mappedBy: 'matiere')]
     private $produits;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'matiere')]
+    private $users = [];
+
     public function __construct()
     {
         $this->produits = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -67,6 +71,33 @@ class Matiere
     {
         if ($this->produits->removeElement($produit)) {
             $produit->removeMatiere($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->addMatiere($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeMatiere($this);
         }
 
         return $this;

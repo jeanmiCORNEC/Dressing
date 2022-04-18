@@ -23,9 +23,13 @@ class Longueur
     #[ORM\OneToMany(mappedBy: 'longeur', targetEntity: Produit::class)]
     private $produits;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'longueur')]
+    private $users = [];
+
     public function __construct()
     {
         $this->produits = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -70,6 +74,33 @@ class Longueur
             if ($produit->getLongeur() === $this) {
                 $produit->setLongeur(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->addLongueur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeLongueur($this);
         }
 
         return $this;

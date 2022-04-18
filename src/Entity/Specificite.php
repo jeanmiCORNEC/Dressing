@@ -32,10 +32,14 @@ class Specificite
     #[ORM\OneToMany(mappedBy: 'specificite', targetEntity: Produit::class)]
     private $produits;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'specificite')]
+    private $users = [];
+
 
     public function __construct()
     {
         $this->produits = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -116,6 +120,33 @@ class Specificite
             if ($produit->getSpecificite() === $this) {
                 $produit->setSpecificite(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->addSpecificite($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeSpecificite($this);
         }
 
         return $this;

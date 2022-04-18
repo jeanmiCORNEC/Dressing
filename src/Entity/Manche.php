@@ -23,9 +23,13 @@ class Manche
     #[ORM\OneToMany(mappedBy: 'manche', targetEntity: Produit::class)]
     private $produits;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'manche')]
+    private $users = [];
+
     public function __construct()
     {
         $this->produits = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -70,6 +74,33 @@ class Manche
             if ($produit->getManche() === $this) {
                 $produit->setManche(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->addManche($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeManche($this);
         }
 
         return $this;

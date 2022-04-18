@@ -23,9 +23,13 @@ class Saison
     #[ORM\OneToMany(mappedBy: 'saison', targetEntity: Produit::class)]
     private $produits;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'saison')]
+    private $users = [];
+
     public function __construct()
     {
         $this->produits = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -70,6 +74,33 @@ class Saison
             if ($produit->getSaison() === $this) {
                 $produit->setSaison(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->addSaison($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeSaison($this);
         }
 
         return $this;

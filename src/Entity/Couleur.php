@@ -23,9 +23,13 @@ class Couleur
     #[ORM\ManyToMany(targetEntity: Produit::class, mappedBy: 'couleur')]
     private $produits;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'couleur')]
+    private $users = [];
+
     public function __construct()
     {
         $this->produits = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -67,6 +71,33 @@ class Couleur
     {
         if ($this->produits->removeElement($produit)) {
             $produit->removeCouleur($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUsers(User $users): self
+    {
+        if (!$this->users->contains($users)) {
+            $this->users[] = $users;
+            $users->addCouleur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUsers(User $users): self
+    {
+        if ($this->users->removeElement($users)) {
+            $users->removeCouleur($this);
         }
 
         return $this;
